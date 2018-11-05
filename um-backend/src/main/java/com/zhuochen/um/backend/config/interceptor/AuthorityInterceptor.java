@@ -4,7 +4,6 @@ import com.zhuochen.um.adapter.config.enums.ResponseCommonCodeEnum;
 import com.zhuochen.um.adapter.web.ResponseMessageWrapper;
 import com.zhuochen.um.backend.domain.RedisUserData;
 import com.zhuochen.um.backend.service.CommonService;
-import com.zhuochen.um.backend.service.CommonStaticService;
 import com.zhuochen.um.backend.service.RedisService;
 import com.zhuochen.um.backend.service.TokenContextHolder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,9 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        Optional<String> optionalToken = TokenContextHolder.getToken();
-        if (optionalToken.isPresent()) {
-            String token = optionalToken.get();
+        Optional<RedisUserData> user = TokenContextHolder.getRedisUser();
+        if (user.isPresent()) {
+            String token = user.get().getToken();
             Optional<RedisUserData> optionalRedisUserData = redisService.getRedisUserByToken(token);
             if (optionalRedisUserData.isPresent()) {
                 redisService.extendRedisUserDataByToken(token, optionalRedisUserData.get());

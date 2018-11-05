@@ -55,11 +55,11 @@ public class LoginService {
     }
 
     public ResponseMessageWrapper logout() {
-        TokenContextHolder.getToken()
-                .ifPresent(token -> {
+        TokenContextHolder.getRedisUser()
+                .ifPresent(user -> {
                     //移除token
-                    redisService.getRedisUserByToken(token)
-                            .ifPresent(redisUserData -> redisService.deleteRedisUserByToken(token));
+                    redisService.getRedisUserByToken(user.getToken())
+                            .ifPresent(userData -> redisService.deleteRedisUserByToken(userData.getToken()));
                 });
         return new ResponseMessageWrapper<>();
     }
